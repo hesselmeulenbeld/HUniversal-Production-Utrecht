@@ -36,9 +36,9 @@
  **/
 EquipletNode::EquipletNode(int id): 
 	equipletId(id),
+	nextModuleID(1),
 	operationState(),
 	safetyState(), 
-	moduleTable(),
 	moduleErrorService(),
 	stateUpdateService(),
 	modulePackageNodeMap(),
@@ -202,7 +202,7 @@ void EquipletNode::updateOperationState(){
  *
  * @return true if the module has a unique id, otherwise false
  **/
-bool EquipletNode::addHardwareModule(Mast::HardwareModuleProperties module){
+bool EquipletNode::addHardwareModule(Mast::HardwareModuleProperties module, bool autoStart){
 	// First check if the module already exists
 	std::vector<Mast::HardwareModuleProperties>::iterator it;
 	for(it = moduleTable.begin(); it < moduleTable.end(); it++){
@@ -211,6 +211,7 @@ bool EquipletNode::addHardwareModule(Mast::HardwareModuleProperties module){
 		}
 	}
 
+	if(autoStart){
 	// Create the string that is used to start another ROS node
 	std::pair< std::string, std::string > packageNodeName = modulePackageNodeMap[module.type];
 	std::stringstream ss(std::stringstream::in | std::stringstream::out);
@@ -229,7 +230,7 @@ bool EquipletNode::addHardwareModule(Mast::HardwareModuleProperties module){
 		default:
 			break;
 	}
-
+	}
 	
 	// Add the module to the table and update the safety state and operation state
 	moduleTable.push_back(module);
@@ -330,6 +331,49 @@ void EquipletNode::callLookupHandler(std::string lookupType, std::string lookupI
 		ROS_ERROR("Error in calling lookupHandler/lookup service");
 	}
 }
+
+/**
+ * Registers a new module to the equiplet node
+ * @param req The request for this service as defined in RegisterHardwareModule.srv
+ * @param res The response for this service as defined in RegisterHardwareModule.srv
+ * 
+ * @return true if the service was handled succesful (might have failed to add the module, indicated in the response)
+ **/
+bool EquipletNode::registerHardwareModule(equipletNode::RegisterHardwareModule::Request &req,
+	equipletNode::RegisterHardwareModule::Response &res) {
+	res.succeeded = true;
+	
+	// Add the new module to the module table
+	Mast::HardwareModuleProperties module(nextModuleID, req.moduleType, rosMast::safe, true, true, req.modulePackage, req.moduleExecutable);
+	if(!addHardwareModule(module, false)){
+		res.succeeded = false;
+	}
+	
+	res.equipletID = equipletId;
+	res.moduleID = nextModuleID;
+	++nextModuleID;
+	return true;
+}
+
+/**
+ * Deregisters an old module in the equiplet node
+ * @param req The request for this service as defined in RegisterHardwareModule.srv
+ * @param res The response for this service as defined in RegisterHardwareModule.srv
+ * 
+ * @return true if the service was handled succesful (might have failed to add the module, indicated in the response)
+ **/
+bool EquipletNode::registerHardwareModule(equipletNode::RegisterHardwareModule::Request &req,
+	equipletNode::RegisterHardwareModule::Response &res) {
+	res.succeeded = true;
+	
+	// Remove the old module from the module table
+	if(!removeHardwareModule(req.moduleID)){
+		res.succeeded = false;
+	}
+
+	return true;
+}
+
 /** 
  * Main that creates the equipletNode and adds hardware modules
  **/
@@ -353,8 +397,8 @@ int main(int argc, char **argv){
 	// This should change to modules being created in the Node itself after commands on blackboard
 	Mast::HardwareModuleProperties deltaRobot(1, 1, rosMast::safe, true, true);
 	Mast::HardwareModuleProperties gripper(2, 2, rosMast::safe, true, true);
-	equipletNode.addHardwareModule(deltaRobot);
-	equipletNode.addHardwareModule(gripper);
+	equipletNode.addHardwareModule(deltaRobot, true);
+	equipletNode.addHardwareModule(gripper, true);
 
 	// print the hardware modules that are currently added to the Equiplet
 	equipletNode.printHardwareModules();

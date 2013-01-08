@@ -39,7 +39,6 @@ namespace Mast{
 	 **/
 	class HardwareModuleProperties{
 	public:
-		HardwareModuleProperties();
 		/**
 		 * Create a new hardware module
 		 * 
@@ -49,8 +48,8 @@ namespace Mast{
 		 * @param actor Is this module an actor
 		 * @param needed Is this module needed for the current service
 		 **/
-		HardwareModuleProperties(int id, int type, rosMast::StateType state, bool actor, bool needed):
-			id(id), type(type), currentState(state), actor(actor), needed(needed), error(false){}
+		HardwareModuleProperties(int id, int type, rosMast::StateType state, bool actuator, bool needed, std::string modulePackage, std::moduleExecutable):
+			id(id), type(type), currentState(state), actor(actor), needed(needed), error(false), modulePackage(modulePackage), moduleExecutable(moduleExecutable){}
 		/**
 		 * @var int id
 		 * The id of the module
@@ -86,6 +85,18 @@ namespace Mast{
 		 * shows if the modules is in an error state
 		 **/
 		bool error;
+		
+		/**
+		 * @var std::string modulePackage
+		 * Holds the ros package name of the module
+		 **/
+		std::string modulePackage;
+		
+		/**
+		 * @var std::string moduleExecutable
+		 * Holds the name of the executable (driver) of the module
+		 **/
+		std::string moduleExecutable;
 
 		/** 
 		 * Print function for a module

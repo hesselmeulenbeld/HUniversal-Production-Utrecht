@@ -78,6 +78,11 @@ private:
 	 **/
 	int equipletId;
 	/**
+		 * @var int nextModuleID
+		 * The ID of the next module that is added
+		 **/
+		 int nextModuleID;
+		/**
 	 * @var Mast::state operationState
 	 * The minimal operation state is equal to the lowest state of all modules that are actors
 	 **/
