@@ -1,0 +1,7 @@
+int32 moduleType
+string modulePackage
+string moduleExecutable
+---
+int32 equipletID
+int32 moduleID
+bool succeeded

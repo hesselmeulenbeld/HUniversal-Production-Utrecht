@@ -1,7 +1,0 @@
-int moduleType
-string modulePackage
-string moduleExecutable
----
-int equipletID
-int moduleID
-bool succeeded

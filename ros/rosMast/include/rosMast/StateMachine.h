@@ -133,6 +133,9 @@ namespace rosMast{
 		stateFunctionPtr lookupTransition(StateType currentState, StateType desiredState);
 		void sendErrorMessage(int errorCode);
 
+		void registerModule(int moduleType, std::string modulePackage, std::string moduleExecutable);
+		void deregisterModule();
+		virtual void startServices();
 	private:
 		/**
 		 * @var std::map<StateTransition, stateFunctionPtr> transitionMap;

@@ -7,7 +7,9 @@
   <author>Arjan Groenewegen</author>
   
   <depend package="roscpp" />  
-  <depend package="std_msgs" />     
+  <depend package="std_msgs" />
+  <depend package="rexosStdMsgs"/>
+  <depend package="rexosStdSrvs"/>
   
   <license>BSD</license>
 
