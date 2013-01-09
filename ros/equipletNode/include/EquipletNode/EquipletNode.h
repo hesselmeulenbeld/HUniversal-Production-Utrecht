@@ -49,6 +49,9 @@
 #include <rexosStdSrvs/Module.h>
 #include <Utilities/Utilities.h>
 
+#include <rexosStdSrvs/RegisterHardwareModule.h>
+#include <rexosStdSrvs/DeregisterHardwareModule.h>
+ 
 #pragma GCC system_header
 #include <Libjson/libjson.h>
 
@@ -60,7 +63,7 @@ public:
 	EquipletNode(int id = 1);
 	virtual ~EquipletNode();
 	void blackboardReadCallback(std::string json);
-	bool addHardwareModule(Mast::HardwareModuleProperties module);
+	bool addHardwareModule(Mast::HardwareModuleProperties module, bool autoStart = false);
 	bool removeHardwareModule(int id);
 	void updateOperationState();
 	void updateSafetyState();
@@ -71,6 +74,8 @@ public:
 	void sendStateChangeRequest(int moduleID, rosMast::StateType newState);
 	rosMast::StateType getModuleState(int moduleID);
 	void callLookupHandler(std::string lookupType, std::string lookupID, environmentCommunicationMessages::Map payload);
+		bool registerHardwareModule(rexosStdSrvs::RegisterHardwareModule::Request &req, rexosStdSrvs::RegisterHardwareModule::Response &res);
+		bool deregisterHardwareModule(rexosStdSrvs::DeregisterHardwareModule::Request &req, rexosStdSrvs::DeregisterHardwareModule::Response &res);
 private:
 	/**
 	 * @var int equipletId
@@ -107,14 +112,6 @@ private:
 	 * Will receive state changed messages from modules
 	 **/
 	ros::ServiceServer stateUpdateService;
-	/**
-	 * @var std::map<int, pair> modulePackageNodeMap
-	 * A map with the moduleType as key and a pair of package name and node name as value.
-	 * This is used to find the name of the node that has to be started when a
-	 * module is added, and the package name where the node can be find. This is a TEMPORARY!!
-	 * solution. Better is to store this in some kind of database.
-	 **/
-	std::map<int, std::pair< std::string, std::string> > modulePackageNodeMap;
 	/**
 	 * @var BlackboardCppClient  *blackboardClient
 	 * Client to read from blackboard

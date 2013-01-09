@@ -43,11 +43,6 @@ EquipletNode::EquipletNode(int id):
 	stateUpdateService(),
 	modulePackageNodeMap(),
 	blackboardClient(NULL){
-	// Create the map with moduleType mapped to package name and node name
-	modulePackageNodeMap = std::map< int, std::pair<std::string, std::string> >();
-	modulePackageNodeMap[1] = std::pair< std::string, std::string > ("deltaRobotNode", "DeltaRobotNode");
-	modulePackageNodeMap[2] = std::pair< std::string, std::string > ("gripperTestNode", "GripperTestNode");
-
 	blackboardClient = new BlackboardCppClient("localhost", "REXOS", "blackboard", this);
 	blackboardClient->subscribe("instruction");
 
@@ -213,9 +208,8 @@ bool EquipletNode::addHardwareModule(Mast::HardwareModuleProperties module, bool
 
 	if(autoStart){
 	// Create the string that is used to start another ROS node
-	std::pair< std::string, std::string > packageNodeName = modulePackageNodeMap[module.type];
 	std::stringstream ss(std::stringstream::in | std::stringstream::out);
-	ss << "rosrun " << packageNodeName.first << " " << packageNodeName.second << " " << equipletId << " " << module.id;
+	ss << "rosrun " << module.modulePackage << " " << module.moduleExecutable << " " << equipletId << " " << module.id;
 	std::cout << ss.str() << std::endl;
 	int pid = -1;
 	switch(pid = fork()){
@@ -339,8 +333,8 @@ void EquipletNode::callLookupHandler(std::string lookupType, std::string lookupI
  * 
  * @return true if the service was handled succesful (might have failed to add the module, indicated in the response)
  **/
-bool EquipletNode::registerHardwareModule(equipletNode::RegisterHardwareModule::Request &req,
-	equipletNode::RegisterHardwareModule::Response &res) {
+bool EquipletNode::registerHardwareModule(rexosStdSrvs::RegisterHardwareModule::Request &req,
+	rexosStdSrvs::RegisterHardwareModule::Response &res) {
 	res.succeeded = true;
 	
 	// Add the new module to the module table
@@ -357,13 +351,13 @@ bool EquipletNode::registerHardwareModule(equipletNode::RegisterHardwareModule::
 
 /**
  * Deregisters an old module in the equiplet node
- * @param req The request for this service as defined in RegisterHardwareModule.srv
- * @param res The response for this service as defined in RegisterHardwareModule.srv
+ * @param req The request for this service as defined in DeregisterHardwareModule.srv
+ * @param res The response for this service as defined in DeregisterHardwareModule.srv
  * 
  * @return true if the service was handled succesful (might have failed to add the module, indicated in the response)
  **/
-bool EquipletNode::registerHardwareModule(equipletNode::RegisterHardwareModule::Request &req,
-	equipletNode::RegisterHardwareModule::Response &res) {
+bool EquipletNode::deregisterHardwareModule(rexosStdSrvs::DeregisterHardwareModule::Request &req,
+	rexosStdSrvs::DeregisterHardwareModule::Response &res) {
 	res.succeeded = true;
 	
 	// Remove the old module from the module table
@@ -395,10 +389,10 @@ int main(int argc, char **argv){
 
 	// Add some hardware modules to this equiplet
 	// This should change to modules being created in the Node itself after commands on blackboard
-	Mast::HardwareModuleProperties deltaRobot(1, 1, rosMast::safe, true, true);
-	Mast::HardwareModuleProperties gripper(2, 2, rosMast::safe, true, true);
-	equipletNode.addHardwareModule(deltaRobot, true);
-	equipletNode.addHardwareModule(gripper, true);
+	//Mast::HardwareModuleProperties deltaRobot(1, 1, rosMast::safe, true, true, "deltaRobotNode", "DeltaRobotNode");
+	//Mast::HardwareModuleProperties gripper(2, 2, rosMast::safe, true, true, "gripperTestNode", "GripperTestNode");
+	//equipletNode.addHardwareModule(deltaRobot, true);
+	//equipletNode.addHardwareModule(gripper, true);
 
 	// print the hardware modules that are currently added to the Equiplet
 	equipletNode.printHardwareModules();

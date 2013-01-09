@@ -48,7 +48,7 @@ namespace Mast{
 		 * @param actor Is this module an actor
 		 * @param needed Is this module needed for the current service
 		 **/
-		HardwareModuleProperties(int id, int type, rosMast::StateType state, bool actuator, bool needed, std::string modulePackage, std::moduleExecutable):
+		HardwareModuleProperties(int id, int type, rosMast::StateType state, bool actuator, bool needed, std::string modulePackage, std::string moduleExecutable):
 			id(id), type(type), currentState(state), actor(actor), needed(needed), error(false), modulePackage(modulePackage), moduleExecutable(moduleExecutable){}
 		/**
 		 * @var int id
