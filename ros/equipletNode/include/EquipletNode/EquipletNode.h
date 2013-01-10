@@ -51,6 +51,8 @@
 
 #include <rexosStdSrvs/RegisterHardwareModule.h>
 #include <rexosStdSrvs/DeregisterHardwareModule.h>
+#include <rexosStdMsgs/HardwareModule.h>
+#include <rexosStdSrvs/GetAllRegisteredModules.h>
  
 #pragma GCC system_header
 #include <Libjson/libjson.h>
@@ -76,6 +78,7 @@ public:
 	void callLookupHandler(std::string lookupType, std::string lookupID, environmentCommunicationMessages::Map payload);
 		bool registerHardwareModule(rexosStdSrvs::RegisterHardwareModule::Request &req, rexosStdSrvs::RegisterHardwareModule::Response &res);
 		bool deregisterHardwareModule(rexosStdSrvs::DeregisterHardwareModule::Request &req, rexosStdSrvs::DeregisterHardwareModule::Response &res);
+		bool getAllRegisteredHardwareModule(rexosStdSrvs::GetAllRegisteredModules::Request &req, rexosStdSrvs::GetAllRegisteredModules::Response &res);
 private:
 	/**
 	 * @var int equipletId
@@ -112,6 +115,10 @@ private:
 	 * Will receive state changed messages from modules
 	 **/
 	ros::ServiceServer stateUpdateService;
+
+		ros::ServiceServer registerService;
+		ros::ServiceServer deregisterService;
+		ros::ServiceServer getAllModulesService;
 	/**
 	 * @var BlackboardCppClient  *blackboardClient
 	 * Client to read from blackboard

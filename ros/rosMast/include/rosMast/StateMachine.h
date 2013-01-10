@@ -39,6 +39,11 @@
 #include "rosMast/ModuleError.h"
 #include "rosMast/States.h"
 
+#include <rexosStdSrvs/RegisterHardwareModule.h>
+#include <rexosStdSrvs/DeregisterHardwareModule.h>
+
+#include <string>
+
 /**
  * The size of the Transition table
  **/
@@ -135,7 +140,7 @@ namespace rosMast{
 
 		void registerModule(int moduleType, std::string modulePackage, std::string moduleExecutable);
 		void deregisterModule();
-		virtual void startServices();
+		virtual void startServices() = 0;
 	private:
 		/**
 		 * @var std::map<StateTransition, stateFunctionPtr> transitionMap;
@@ -179,5 +184,6 @@ namespace rosMast{
 		 **/
 		int moduleID;
 	};
+
 }
 #endif

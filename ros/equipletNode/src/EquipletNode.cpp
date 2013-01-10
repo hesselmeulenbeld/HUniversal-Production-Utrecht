@@ -54,6 +54,9 @@ EquipletNode::EquipletNode(int id):
 	std::string str = stringStream.str();
 	moduleErrorService = nodeHandle.advertiseService("ModuleError_" + str, &EquipletNode::moduleError, this);
 	stateUpdateService = nodeHandle.advertiseService("StateUpdate_" + str, &EquipletNode::stateChanged, this);
+	registerService = nodeHandle.advertiseService("registerModule", &EquipletNode::registerHardwareModule, this);
+	deregisterService = nodeHandle.advertiseService("deregisterModule", &EquipletNode::deregisterHardwareModule, this);
+	getAllModulesService = nodeHandle.advertiseService("getAllModules", &EquipletNode::getAllRegisteredHardwareModule, this);
 } 
 
 /**
@@ -334,17 +337,24 @@ void EquipletNode::callLookupHandler(std::string lookupType, std::string lookupI
  * @return true if the service was handled succesful (might have failed to add the module, indicated in the response)
  **/
 bool EquipletNode::registerHardwareModule(rexosStdSrvs::RegisterHardwareModule::Request &req,
-	rexosStdSrvs::RegisterHardwareModule::Response &res) {
+		rexosStdSrvs::RegisterHardwareModule::Response &res) {
 	res.succeeded = true;
 	
+	ROS_INFO("GOT REGISTER REQUEST");
+	std::cout << "Registering module" << std::endl;
+
 	// Add the new module to the module table
 	Mast::HardwareModuleProperties module(nextModuleID, req.moduleType, rosMast::safe, true, true, req.modulePackage, req.moduleExecutable);
 	if(!addHardwareModule(module, false)){
 		res.succeeded = false;
+		std::cout << "Fail" << std::endl;
 	}
 	
+
+
 	res.equipletID = equipletId;
 	res.moduleID = nextModuleID;
+
 	++nextModuleID;
 	return true;
 }
@@ -360,9 +370,36 @@ bool EquipletNode::deregisterHardwareModule(rexosStdSrvs::DeregisterHardwareModu
 	rexosStdSrvs::DeregisterHardwareModule::Response &res) {
 	res.succeeded = true;
 	
+	std::cout << "Deregistering module" << std::endl;
+
 	// Remove the old module from the module table
 	if(!removeHardwareModule(req.moduleID)){
 		res.succeeded = false;
+	}
+
+	return true;
+}
+
+/**
+ * Gets a list of all connected modules and their state
+ * @param req The request for this service as defined in GetAllRegisteredModules.srv
+ * @param res The response for this service as defined in GetAllRegisteredModules.srv
+ * 
+ * @return true if the service was handled succesful (might have failed to add the module, indicated in the response)
+ **/
+bool EquipletNode::getAllRegisteredHardwareModule(rexosStdSrvs::GetAllRegisteredModules::Request &req,
+	rexosStdSrvs::GetAllRegisteredModules::Response &res) {
+
+	std::vector<Mast::HardwareModuleProperties>::iterator it;
+	for(it = moduleTable.begin(); it < moduleTable.end(); ++it) {
+		rexosStdMsgs::HardwareModule module;
+		module.id = it->id;
+		module.type = it->type;
+		module.currentState = it->currentState;
+		module.actuator = it->actuator;
+		module.needed = it->needed;
+		module.error = it->error;
+		res.modules.push_back(module);
 	}
 
 	return true;

@@ -66,6 +66,7 @@ namespace deltaRobotNodeNamespace{
 		int transitionShutdown();
 		int transitionStart();
 		int transitionStop();
+			void startServices();
 			
 		// Main functions to be called from the services
 		bool calibrate();

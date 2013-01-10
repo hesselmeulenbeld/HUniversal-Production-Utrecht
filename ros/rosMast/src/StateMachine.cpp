@@ -51,7 +51,7 @@ rosMast::StateMachine::StateMachine(int equipletID, int moduleID) :
 	transitionMap[transitionTable[2]] = &StateMachine::transitionStart;
 	transitionMap[transitionTable[3]] = &StateMachine::transitionStop;
 
-	// Initialize publisher and subcriber
+	// Initialize publisher and subscriber
 	ros::NodeHandle nodeHandle;
 	std::stringstream stringStream;
 	stringStream << equipletID;
@@ -155,6 +155,8 @@ void rosMast::StateMachine::sendErrorMessage(int errorCode) {
  **/
 void rosMast::StateMachine::registerModule(int moduleType, std::string modulePackage, std::string moduleExecutable){
 
+	std::cout << "Registering module" << std::endl;
+
 	// Create service server
 	ros::NodeHandle nodeHandle;
 	ros::ServiceClient registerServiceClient = nodeHandle.serviceClient<rexosStdSrvs::RegisterHardwareModule>("registerModule");
@@ -165,21 +167,27 @@ void rosMast::StateMachine::registerModule(int moduleType, std::string modulePac
 	registerModuleService.request.modulePackage = modulePackage;
 	registerModuleService.request.moduleExecutable = moduleExecutable;
 	registerModuleService.response.succeeded = false;
+
+	std::cout << "Calling service" << std::endl;
 	registerServiceClient.call(registerModuleService);
+	std::cout << "Got reply" << std::endl;
 	
 	// Save equipletID and moduleID
 	if(registerModuleService.response.succeeded){
+		std::cout << "Succeeded" << std::endl;
 		equipletID = registerModuleService.response.equipletID;
 		moduleID = registerModuleService.response.moduleID;
 		
 		// Start request state change service (using new equiplet and module ID)
 		std::stringstream stringStream;
-		stringStream "RequestStateChange_" << equipletID << "_" << moduleID;
+		stringStream << "RequestStateChange_" << equipletID << "_" << moduleID;
 		std::string str = stringStream.str();
 		stateChangeRequestClient = nodeHandle.advertiseService(str, &StateMachine::changeState, this);
+		std::cout << "Finished registration proces" << std::endl;
 		
 		ROS_INFO("Registered new hardware module %d %d", equipletID, moduleID);
 	} else {
+		std::cout << "Fail" << std::endl;
 		ROS_ERROR("Failed to register hardware module");
 	}
 }
@@ -201,12 +209,15 @@ Deregistratie van oude module:
 	ros::NodeHandle nodeHandle;
 	ros::ServiceClient deregisterServiceClient = nodeHandle.serviceClient<rexosStdSrvs::DeregisterHardwareModule>("deregisterModule");
 	
+	std::cout << "Deregistering module" << std::endl;
+
 	// Request register service (type / package path / executable name)
 	rexosStdSrvs::DeregisterHardwareModule deregisterModuleService;
 	deregisterModuleService.request.moduleID = moduleID;
 	deregisterModuleService.response.succeeded = false;
-	deregisterServiceClient.call(deregisterModuleService);
 	
+	std::cout << deregisterServiceClient.call(deregisterModuleService) << std::endl;
+
 	// Save equipletID and moduleID
 	if(deregisterModuleService.response.succeeded){
 		equipletID = 0;

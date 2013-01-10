@@ -49,6 +49,7 @@ public:
 	int transitionShutdown();
 	int transitionStart();
 	int transitionStop();
+		void startServices();
 	void error();
 	static void WrapperForGripperError(void* gripperNodeObject);
 	bool grip(gripperTestNode::Grip::Request &req, gripperTestNode::Grip::Response &res);

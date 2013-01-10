@@ -107,6 +107,12 @@ int GripperTestNode::transitionStop(){
 }
 
 /**
+ * Required by the state machine
+ **/
+void GripperTestNode::startServices(){
+}
+
+/**
  * Set gripper on
  *
  * @param req The request for this service as defined in Grip.srv
@@ -156,7 +162,10 @@ int main(int argc, char** argv){
 	}
 
 	GripperTestNode gripperTestNode(equipletID, moduleID);
-
+	gripperTestNode.registerModule(2, "gripperTestNode", "GripperTestNode");
+	gripperTestNode.deregisterModule();
 	ros::spin();
+
+
 	return 0;
 }

@@ -639,25 +639,45 @@ deltaRobotNodeNamespace::Point* deltaRobotNodeNamespace::DeltaRobotNode::parsePo
 	return path;
 }
 
+void deltaRobotNodeNamespace::DeltaRobotNode::startServices(){
+	ros::NodeHandle nodeHandle;
+
+	// Advertise the services
+	moveToPointService = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_POINT, &deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint, this);
+	movePathService =	nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_PATH, &deltaRobotNodeNamespace::DeltaRobotNode::movePath, this);
+
+	moveToRelativePointService = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_RELATIVE_POINT, &deltaRobotNodeNamespace::DeltaRobotNode::moveToRelativePoint, this);
+	moveRelativePathService = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_RELATIVE_PATH, &deltaRobotNodeNamespace::DeltaRobotNode::moveRelativePath, this);
+
+	calibrateService = nodeHandle.advertiseService(DeltaRobotNodeServices::CALIBRATE, &deltaRobotNodeNamespace::DeltaRobotNode::calibrate, this);
+
+}
+
 /**
- * Main that creates the deltaRobotNode and starts the statemachine
+ * Main that creates the deltaRobotNode and starts the state machine
  **/
 int main(int argc, char **argv){
 	int equipletID = 0;
 	int moduleID = 0;
 
-	if(argc < 3 || !(Utilities::stringToInt(equipletID, argv[1]) == 0 && Utilities::stringToInt(moduleID, argv[2]) == 0)){ 	 	
-		ROS_INFO("Cannot read equiplet id and/or moduleId from commandline please use correct values.");
-		return -1;
-	}
+	if(argc < 3 || !(Utilities::stringToInt(equipletID, argv[1]) == 0 && Utilities::stringToInt(moduleID, argv[2]) == 0))
+	{ 	 	
+    	ROS_INFO("Cannot read equipletID and/or moduleID from commandline please use correct values.");
+    	return -1;
+  	}
 
 	ros::init(argc, argv, NODE_NAME);
 	
 	ROS_INFO("Creating DeltaRobotNode");
 
 	deltaRobotNodeNamespace::DeltaRobotNode drn(equipletID, moduleID);
+	// Deltarobot is module type 1
+	drn.registerModule(1, "deltaRobotNode", "DeltaRobotNode");
+	drn.startServices();
 
 	ROS_INFO("Running StateEngine");
 	ros::spin();
+
+	drn.deregisterModule();
 	return 0;
 }
