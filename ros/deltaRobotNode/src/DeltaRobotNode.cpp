@@ -52,7 +52,6 @@
  * @param moduleID identifier for the deltarobot
  **/
 deltaRobotNodeNamespace::DeltaRobotNode::DeltaRobotNode(int equipletID, int moduleID) : 
-	rosMast::StateMachine(equipletID, moduleID),
 	deltaRobot(NULL),
 	modbus(NULL),
 	motorManager(NULL),
@@ -216,6 +215,7 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint(double x, double y, do
 bool deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint_old(deltaRobotNode::MoveToPoint::Request &req, deltaRobotNode::MoveToPoint::Response &res) {
 	ROS_INFO("moveToPoint_old called");
 	
+	std::cout << "JSON: " << req.json << std::endl;
 	if(getState() != rosMast::normal) {
 		res.succeeded = false;
 		res.message="Cannot move to point, mast state="+ std::string(rosMast::state_txt[getState()]);
@@ -657,20 +657,12 @@ void deltaRobotNodeNamespace::DeltaRobotNode::startServices(){
  * Main that creates the deltaRobotNode and starts the state machine
  **/
 int main(int argc, char **argv){
-	int equipletID = 0;
-	int moduleID = 0;
-
-	if(argc < 3 || !(Utilities::stringToInt(equipletID, argv[1]) == 0 && Utilities::stringToInt(moduleID, argv[2]) == 0))
-	{ 	 	
-    	ROS_INFO("Cannot read equipletID and/or moduleID from commandline please use correct values.");
-    	return -1;
-  	}
 
 	ros::init(argc, argv, NODE_NAME);
 	
 	ROS_INFO("Creating DeltaRobotNode");
 
-	deltaRobotNodeNamespace::DeltaRobotNode drn(equipletID, moduleID);
+	deltaRobotNodeNamespace::DeltaRobotNode drn;
 	// Deltarobot is module type 1
 	drn.registerModule(1, "deltaRobotNode", "DeltaRobotNode");
 	drn.startServices();
@@ -678,6 +670,7 @@ int main(int argc, char **argv){
 	ROS_INFO("Running StateEngine");
 	ros::spin();
 
+	// TODO: fix deregister
 	drn.deregisterModule();
 	return 0;
 }

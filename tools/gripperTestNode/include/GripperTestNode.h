@@ -43,8 +43,8 @@
  **/
 class GripperTestNode: public rosMast::StateMachine{
 public:
-	GripperTestNode(int equipletID, int moduleID);
-	~GripperTestNode();
+	GripperTestNode();
+	virtual ~GripperTestNode();
 	int transitionSetup();
 	int transitionShutdown();
 	int transitionStart();

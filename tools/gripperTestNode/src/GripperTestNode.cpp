@@ -37,7 +37,7 @@
  * @param equipletID identifier for the equiplet
  * @param moduleID identifier for the gripper
  **/
-GripperTestNode::GripperTestNode(int equipletID, int moduleID): rosMast::StateMachine(equipletID, moduleID){
+GripperTestNode::GripperTestNode(): rosMast::StateMachine(){
 	gripper = new Gripper(this, WrapperForGripperError);
 	ros::NodeHandle nodeHandle;
 	// Advertise the services
@@ -154,14 +154,8 @@ bool GripperTestNode::release(gripperTestNode::Release::Request &req, gripperTes
 
 int main(int argc, char** argv){
 	ros::init(argc, argv, NODE_NAME);
-	int equipletID = 0;
-	int moduleID = 0;
-	if(argc < 3 || !(Utilities::stringToInt(equipletID, argv[1]) == 0 && Utilities::stringToInt(moduleID, argv[2]) == 0)){
-		std::cerr << "Cannot read equiplet id and/or moduleId from commandline please use correct values." << std::endl;
-		return -1;
-	}
 
-	GripperTestNode gripperTestNode(equipletID, moduleID);
+	GripperTestNode gripperTestNode;
 	gripperTestNode.registerModule(2, "gripperTestNode", "GripperTestNode");
 	gripperTestNode.deregisterModule();
 	ros::spin();

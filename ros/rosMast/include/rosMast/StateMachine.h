@@ -97,9 +97,8 @@ namespace rosMast{
 		typedef int (StateMachine::*stateFunctionPtr)();
 
 	public:
-		StateMachine(int equipletID, int moduleID);
-
-			virtual ~StateMachine(){ };
+		StateMachine();
+		virtual ~StateMachine(){ };
 
 		/**
 		 * Transition from Safe to Standby
@@ -159,6 +158,9 @@ namespace rosMast{
 		 * The publisher for posting error messages
 		 **/
 		ros::ServiceClient moduleErrorServer;
+
+			ros::ServiceClient deregisterServiceClient;
+
 
 		/**
 		 * @var ros::ServiceServer stateChangeRequestClient

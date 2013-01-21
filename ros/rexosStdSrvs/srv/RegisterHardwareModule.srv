@@ -1,6 +1,7 @@
 int32 moduleType
 string modulePackage
 string moduleExecutable
+bool isActuator
 ---
 int32 equipletID
 int32 moduleID
