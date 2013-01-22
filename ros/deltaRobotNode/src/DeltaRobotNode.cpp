@@ -664,7 +664,7 @@ int main(int argc, char **argv){
 
 	deltaRobotNodeNamespace::DeltaRobotNode drn;
 	// Deltarobot is module type 1
-	drn.registerModule(1, "deltaRobotNode", "DeltaRobotNode");
+	drn.registerModule(1, "deltaRobotNode", "DeltaRobotNode", true);
 	drn.startServices();
 
 	ROS_INFO("Running StateEngine");

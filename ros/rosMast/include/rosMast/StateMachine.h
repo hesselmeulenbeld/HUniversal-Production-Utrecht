@@ -137,7 +137,7 @@ namespace rosMast{
 		stateFunctionPtr lookupTransition(StateType currentState, StateType desiredState);
 		void sendErrorMessage(int errorCode);
 
-		void registerModule(int moduleType, std::string modulePackage, std::string moduleExecutable);
+		void registerModule(int moduleType, std::string modulePackage, std::string moduleExecutable, bool actuator);
 		void deregisterModule();
 		virtual void startServices() = 0;
 	private:
