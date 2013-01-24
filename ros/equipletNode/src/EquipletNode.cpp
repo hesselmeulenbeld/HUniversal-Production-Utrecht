@@ -353,7 +353,7 @@ bool EquipletNode::registerHardwareModule(rexosStdSrvs::RegisterHardwareModule::
 	
 	// Send the registered message to be received by android.
 	// Consists of equipletID, moduleID, moduleType, boolean actuator and boolean needed
-	ROS_INFO("Registered new hardware module %d %d %d %d 0", equipletID, nextModuleID, req.moduleType, req.isActuator);
+	ROS_INFO("Registered new hardware module %d %d %d %d 0", equipletId, nextModuleID, req.moduleType, req.isActuator);
 
 	++nextModuleID;
 	return true;
@@ -375,7 +375,7 @@ bool EquipletNode::deregisterHardwareModule(rexosStdSrvs::DeregisterHardwareModu
 		res.succeeded = false;
 	}
 
-	ROS_INFO("Deregistered old hardware module %d %d", equipletID, moduleID);
+	ROS_INFO("Deregistered old hardware module %d %d", equipletId, req.moduleID);
 	
 	return true;
 }

@@ -156,7 +156,7 @@ int main(int argc, char** argv){
 	ros::init(argc, argv, NODE_NAME);
 
 	GripperTestNode gripperTestNode;
-	gripperTestNode.registerModule(2, "gripperTestNode", "GripperTestNode");
+	gripperTestNode.registerModule(2, "gripperTestNode", "GripperTestNode", true);
 	gripperTestNode.deregisterModule();
 	ros::spin();
 
