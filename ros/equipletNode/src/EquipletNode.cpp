@@ -41,7 +41,6 @@ EquipletNode::EquipletNode(int id):
 	safetyState(), 
 	moduleErrorService(),
 	stateUpdateService(),
-	modulePackageNodeMap(),
 	blackboardClient(NULL){
 	blackboardClient = new BlackboardCppClient("localhost", "REXOS", "blackboard", this);
 	blackboardClient->subscribe("instruction");
@@ -396,7 +395,7 @@ bool EquipletNode::getAllRegisteredHardwareModule(rexosStdSrvs::GetAllRegistered
 		module.id = it->id;
 		module.type = it->type;
 		module.currentState = it->currentState;
-		module.actuator = it->actuator;
+		module.actor = it->actor;
 		module.needed = it->needed;
 		module.error = it->error;
 		res.modules.push_back(module);

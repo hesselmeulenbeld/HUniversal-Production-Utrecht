@@ -34,16 +34,14 @@
  * @param equipletID the unique identifier for the equiplet
  * @param moduleID the unique identifier for the module that implements the statemachine
  **/
-rosMast::StateMachine::StateMachine(int equipletID, int moduleID) :
+rosMast::StateMachine::StateMachine() :
 	transitionMap(),
 	stateUpdateServer(),
-	equipletID(0),
-	moduleID(0),
 	moduleErrorServer(),
 	stateChangeRequestClient(),
 	currentState(safe),
-	equipletID(equipletID),
-	moduleID(moduleID){
+	equipletID(0),
+	moduleID(0){
 
 	StateTransition transitionTable[] = {StateTransition(safe, standby), StateTransition(standby, safe), StateTransition(standby, normal), StateTransition(normal,standby)};
 
